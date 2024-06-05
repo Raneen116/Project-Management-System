@@ -35,7 +35,7 @@ class UserRoles(models.TextChoices):
     MEMBER = "MEMBER", _("Member")
 
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=UserRoles.choices)
@@ -46,3 +46,70 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Project(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    created_by = models.ForeignKey(
+        User, related_name="projects", on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Status(models.TextChoices):
+    NOT_YET_STARTED = "NOT_YET_STARTED", _("not yet started")
+    IN_PROGRESS = "IN_PROGRESS", _("in progress")
+    COMPLETED = "COMPLETED", _("completed")
+    ON_HOLD = "ON_HOLD", _("on hold")
+
+
+class Task(models.Model):
+
+    project = models.ForeignKey(Project, related_name="tasks", on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    assigned_to = models.ForeignKey(
+        User,
+        related_name="assigned_tasks",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    status = models.TextField(choices=Status.choices, default=Status.NOT_YET_STARTED)
+
+    def __str__(self):
+        return self.name
+
+
+class Milestone(models.Model):
+    project = models.ForeignKey(
+        Project, related_name="milestones", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    assigned_to = models.ForeignKey(
+        User,
+        related_name="assigned_milestones",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    is_achieved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(
+        User, related_name="notifications", on_delete=models.CASCADE
+    )
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}-{self.subject}"

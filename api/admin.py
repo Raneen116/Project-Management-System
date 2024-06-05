@@ -1,4 +1,7 @@
 from django.contrib import admin
-from api.models import CustomUser
+from api.models import User, Project, Task, Milestone
 
-admin.site.register(CustomUser)
+admin.site.register(User)
+admin.site.register(Project)
+admin.site.register(Task)
+admin.site.register(Milestone)
