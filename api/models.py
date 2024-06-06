@@ -25,6 +25,8 @@ class CustomUserManager(UserManager):
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
+        if extra_fields.get("role") != "ADMIN":
+            raise ValueError("Sper admin must have role='ADMIN'")
 
         return self.create_user(email, password, **extra_fields)
 
@@ -51,9 +53,10 @@ class User(AbstractUser):
 class Project(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey(
-        User, related_name="projects", on_delete=models.CASCADE
+    owner = models.ForeignKey(
+        User, related_name="owned_projects", on_delete=models.CASCADE
     )
+    members = models.ManyToManyField(User, related_name='assigned_projects', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -79,6 +82,7 @@ class Task(models.Model):
         blank=True,
     )
     status = models.TextField(choices=Status.choices, default=Status.NOT_YET_STARTED)
+    due_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -90,13 +94,7 @@ class Milestone(models.Model):
     )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    assigned_to = models.ForeignKey(
-        User,
-        related_name="assigned_milestones",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
+    due_date = models.DateField(blank=True, null=True)
     is_achieved = models.BooleanField(default=False)
 
     def __str__(self):
