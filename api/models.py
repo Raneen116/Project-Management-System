@@ -57,6 +57,9 @@ class Project(models.Model):
         User, related_name="owned_projects", on_delete=models.CASCADE
     )
     members = models.ManyToManyField(User, related_name="assigned_projects", blank=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="created_projects"
+    )
 
     def __str__(self):
         return self.name
@@ -83,6 +86,9 @@ class Task(models.Model):
     )
     status = models.TextField(choices=Status.choices, default=Status.NOT_YET_STARTED)
     due_date = models.DateField(blank=True, null=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="created_tasks"
+    )
 
     def __str__(self):
         return self.name
@@ -96,6 +102,16 @@ class Milestone(models.Model):
     description = models.TextField(blank=True, null=True)
     due_date = models.DateField(blank=True, null=True)
     is_achieved = models.BooleanField(default=False)
+    assigned_to = models.ForeignKey(
+        User,
+        related_name="assigned_milestones",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="created_milestones"
+    )
 
     def __str__(self):
         return self.name

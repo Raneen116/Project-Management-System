@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
-from api.models import User, Project, Task, Milestone
+from api.models import User, Project, Task, Milestone, Notification as NotificationModel
 
 
 class CustomUserAdmin(UserAdmin):
@@ -65,3 +65,4 @@ admin.site.register(User, CustomUserAdmin)
 admin.site.register(Project)
 admin.site.register(Task)
 admin.site.register(Milestone)
+admin.site.register(NotificationModel)
