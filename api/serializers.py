@@ -24,7 +24,6 @@ class UserSerializer(DynamicFieldsModelSerializer):
 
 
 class ProjectSerializer(DynamicFieldsModelSerializer):
-    owner = UserSerializer(fields=["id", "username", "email"])
     member_details = serializers.SerializerMethodField()
 
     class Meta:

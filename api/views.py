@@ -42,8 +42,8 @@ class ProjectView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
-            data["owner"] = request.user
-            data["created_by"] = request.user
+            data["owner"] = request.user.id
+            data["created_by"] = request.user.id
             serializer = ProjectSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
@@ -149,7 +149,7 @@ class TaskView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
-            data["created_by"] = request.user
+            data["created_by"] = request.user.id
             serializer = TaskSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
@@ -248,7 +248,7 @@ class MilestoneView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
-            data["created_by"] = request.user
+            data["created_by"] = request.user.id
             serializer = MilestoneSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
