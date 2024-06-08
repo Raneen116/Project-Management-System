@@ -54,10 +54,11 @@ class TaskSerializer(DynamicFieldsModelSerializer):
 
     def validate(self, attrs):
         members = attrs.get("project").members.all()
-        if attrs.get("assigned_to") not in members:
-            raise serializers.ValidationError(
-                "This user not belong to the parent project."
-            )
+        if attrs.get("assigned_to"):
+            if attrs.get("assigned_to") not in members:
+                raise serializers.ValidationError(
+                    "This user not belong to the parent project."
+                )
         return attrs
 
 
